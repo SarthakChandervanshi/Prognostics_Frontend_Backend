@@ -1,0 +1,32 @@
+{
+  "entries": [
+    {
+      "model": "This work (Quantile LSTM + SHAP)",
+      "dataset": "NASA C-MAPSS FD001",
+      "rmse": "12.51",
+      "nasa_score": "274.41",
+      "notes": "Precomputed test evaluation; quantile intervals; Kalman-smoothed features."
+    },
+    {
+      "model": "Attention-LSTM (typical reported range)",
+      "dataset": "C-MAPSS FD001",
+      "rmse": "15–18",
+      "nasa_score": "300–450",
+      "notes": "Illustrative band from attention-weighted sequence models in PHM surveys."
+    },
+    {
+      "model": "Stacked LSTM baseline (typical)",
+      "dataset": "C-MAPSS FD001",
+      "rmse": "16–20",
+      "nasa_score": "350–500",
+      "notes": "Common strong baseline before attention or uncertainty heads."
+    },
+    {
+      "model": "CAE-LSTM style hybrid (typical)",
+      "dataset": "C-MAPSS FD001",
+      "rmse": "14–17",
+      "nasa_score": "280–380",
+      "notes": "Autoencoder front-end + LSTM; varies by training split and features."
+    }
+  ]
+}
