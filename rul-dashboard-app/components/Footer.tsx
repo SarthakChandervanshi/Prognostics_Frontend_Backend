@@ -6,19 +6,29 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <p className="font-medium text-foreground">NASA C-MAPSS FD001</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Model family: stacked LSTM with quantile regression heads. Tooling:
-              TensorFlow / Keras, SHAP, Next.js. This interface displays
-              precomputed artifacts only (no live training or SHAP in the browser).
-            </p>
+            <p className="font-medium text-foreground">Project scope</p>
+            <div className="mt-2 space-y-1.5 text-sm text-muted-foreground">
+              <p>
+                <span className="font-medium text-foreground/90">Dataset:</span>{" "}
+                NASA C-MAPSS FD001
+              </p>
+              <p>
+                <span className="font-medium text-foreground/90">Model family:</span>{" "}
+                Stacked LSTM with quantile regression heads
+              </p>
+              <p>
+                <span className="font-medium text-foreground/90">Tools:</span>{" "}
+                TensorFlow/Keras, SHAP
+              </p>
+            </div>
           </div>
           <div className="text-sm text-muted-foreground">
             <p className="font-medium text-foreground/90">Disclaimer</p>
             <p className="mt-2">
-              This site presents exported results from the final evaluation run.
-              Figures and metrics are for communication and research storytelling,
-              not operational certification.
+              This site presents precomputed results from the final model
+              evaluation run. Figures and metrics are intended for research
+              communication and demonstration only, not for operational
+              certification.
             </p>
           </div>
         </div>

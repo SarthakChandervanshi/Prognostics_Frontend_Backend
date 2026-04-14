@@ -10,6 +10,12 @@ export type Metrics = {
   weighted_MAE_definition: string;
   coverage: number;
   mean_interval_width: number;
+  critical_n: number;
+  critical_rmse: number;
+  critical_within_10_pct: number;
+  healthy_n: number;
+  healthy_rmse: number;
+  healthy_within_10_pct: number;
 };
 
 export type PredictionRow = {
@@ -35,11 +41,14 @@ export type ShapGlobal = {
 };
 
 export type LiteratureEntry = {
+  rank: number;
   model: string;
-  dataset: string;
-  rmse: string;
-  nasa_score: string;
-  notes: string;
+  source?: string;
+  rmse: number;
+  nasa_score: number;
+  status: string;
+  link: string;
+  advantage: string;
 };
 
 export type Literature = {

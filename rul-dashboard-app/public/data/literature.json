@@ -1,32 +1,44 @@
 {
   "entries": [
     {
-      "model": "This work (Quantile LSTM + SHAP)",
-      "dataset": "NASA C-MAPSS FD001",
-      "rmse": "12.51",
-      "nasa_score": "274.41",
-      "notes": "Precomputed test evaluation; quantile intervals; Kalman-smoothed features."
+      "rank": 1,
+      "model": "Attention-LSTM",
+      "source": "PHM Society",
+      "nasa_score": 200.0,
+      "rmse": 12.33,
+      "status": "SOTA",
+      "link": "https://papers.phmsociety.org/index.php/ijphm/article/download/4274/2620",
+      "advantage": "Best NASA score among listed baselines."
     },
     {
-      "model": "Attention-LSTM (typical reported range)",
-      "dataset": "C-MAPSS FD001",
-      "rmse": "15–18",
-      "nasa_score": "300–450",
-      "notes": "Illustrative band from attention-weighted sequence models in PHM surveys."
+      "rank": 2,
+      "model": "Quantile LSTM + SHAP",
+      "source": "Current project (FD001)",
+      "nasa_score": 274.4134,
+      "rmse": 12.5101,
+      "status": "Proposed",
+      "link": "https://github.com/SarthakChandervanshi/Digital-Twin-Framework-for-Industrial-Asset-Prognostics",
+      "advantage": "Competitive RMSE with calibrated uncertainty intervals and SHAP interpretability."
     },
     {
-      "model": "Stacked LSTM baseline (typical)",
-      "dataset": "C-MAPSS FD001",
-      "rmse": "16–20",
-      "nasa_score": "350–500",
-      "notes": "Common strong baseline before attention or uncertainty heads."
+      "rank": 3,
+      "model": "CAELSTM",
+      "source": "Scientific Reports (Nature)",
+      "nasa_score": 282.38,
+      "rmse": 14.44,
+      "status": "SOTA",
+      "link": "https://www.nature.com/articles/s41598-025-09155-z",
+      "advantage": "Strong hybrid architecture with robust generalization."
     },
     {
-      "model": "CAE-LSTM style hybrid (typical)",
-      "dataset": "C-MAPSS FD001",
-      "rmse": "14–17",
-      "nasa_score": "280–380",
-      "notes": "Autoencoder front-end + LSTM; varies by training split and features."
+      "rank": 4,
+      "model": "Stacked LSTM",
+      "source": "JOETEX",
+      "nasa_score": 311.2,
+      "rmse": 15.22,
+      "status": "SOTA",
+      "link": "https://shmpublisher.com/index.php/joetex/article/download/585/317/3730",
+      "advantage": "Strong and widely used deep sequential baseline."
     }
   ]
 }

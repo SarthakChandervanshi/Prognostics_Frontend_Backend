@@ -1,13 +1,19 @@
 {
   "scope": "last_window_per_test_engine",
   "n_engines": 100,
-  "RMSE": 12.510066,
-  "R2": 0.902544,
-  "NASA_score": 274.41338,
+  "RMSE": 12.5101,
+  "R2": 0.9025,
+  "NASA_score": 274.4134,
   "within_10_pct": 68.0,
   "within_20_pct": 88.0,
-  "weighted_MAE": 7.217562,
+  "weighted_MAE": 7.2176,
   "weighted_MAE_definition": "weights = 3.0 if y_true <= 20 else 1; weighted_MAE = sum(weights * |error|) / sum(weights)",
   "coverage": 0.83,
-  "mean_interval_width": 32.859956
+  "mean_interval_width": 32.859956,
+  "critical_n": 16,
+  "critical_rmse": 3.0735,
+  "critical_within_10_pct": 100.0,
+  "healthy_n": 84,
+  "healthy_rmse": 13.5835,
+  "healthy_within_10_pct": 61.9
 }

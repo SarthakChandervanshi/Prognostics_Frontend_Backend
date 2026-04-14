@@ -7,6 +7,15 @@ function rmse(rows: PredictionRow[]): number {
   return Math.sqrt(mse);
 }
 
+function withinPercent(rows: PredictionRow[], pct: number): number {
+  if (rows.length === 0) return 0;
+  const count = rows.filter((r) => {
+    const tolerance = Math.abs(r.y_true) * pct;
+    return Math.abs(r.rul_mid - r.y_true) <= tolerance;
+  }).length;
+  return (count / rows.length) * 100;
+}
+
 export function splitPhaseStats(predictions: PredictionRow[]) {
   const critical = predictions.filter((r) => r.y_true <= 20);
   const healthy = predictions.filter((r) => r.y_true > 20);
@@ -14,10 +23,12 @@ export function splitPhaseStats(predictions: PredictionRow[]) {
     critical: {
       n: critical.length,
       rmse: rmse(critical),
+      within_10_pct: withinPercent(critical, 0.1),
     },
     healthy: {
       n: healthy.length,
       rmse: rmse(healthy),
+      within_10_pct: withinPercent(healthy, 0.1),
     },
   };
 }

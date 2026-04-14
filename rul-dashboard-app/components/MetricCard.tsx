@@ -1,15 +1,18 @@
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
 export function MetricCard({
   title,
   value,
   subtitle,
   className,
+  titleAccessory,
 }: {
   title: string;
   value: string;
   subtitle?: string;
   className?: string;
+  titleAccessory?: ReactNode;
 }) {
   return (
     <div
@@ -18,7 +21,10 @@ export function MetricCard({
         className
       )}
     >
-      <p className="text-sm text-muted-foreground">{title}</p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm text-muted-foreground">{title}</p>
+        {titleAccessory}
+      </div>
       <h3 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
         {value}
       </h3>
