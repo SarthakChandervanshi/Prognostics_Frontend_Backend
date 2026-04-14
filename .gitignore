@@ -1,0 +1,79 @@
+# --- OS ---
+.DS_Store
+**/.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Environment & secrets ---
+.env
+.env.*
+!.env.example
+!.env*.example
+
+# --- Dependencies ---
+node_modules/
+**/node_modules/
+
+# --- Next.js ---
+.next/
+**/.next/
+out/
+**/out/
+build/
+**/build/
+.vercel/
+**/.vercel/
+
+# --- JS / TS tooling ---
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+**/coverage/
+.turbo/
+**/.turbo/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# --- Python (common alongside DS / backend work) ---
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+ENV/
+.env.venv
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# --- IDE & editors ---
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+
+# --- Certificates & keys ---
+*.pem
+*.key
+*.p12
+
+# --- Large / generated model artifacts (keep JSON/config in git; use Git LFS or releases for weights) ---
+data/**/*.h5
+data/**/*.h5.*
+data/**/*.onnx
+data/**/*.pb
+data/**/*.pt
+data/**/*.pth
+data/**/*.ckpt
+data/**/*.safetensors
+
+# --- Misc ---
+*.local
+.cache/
+**/.cache/
