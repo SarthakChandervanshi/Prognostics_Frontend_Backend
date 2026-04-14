@@ -13,36 +13,42 @@ import { ExternalLink } from "lucide-react";
 
 export default function ComparisonTable({ data }: { data: Literature }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border/80 bg-card/40 shadow-sm">
-      <Table>
+    <div className="rounded-xl border border-border/80 bg-card/40 shadow-sm">
+      <Table className="table-fixed">
         <TableHeader className="bg-muted/25">
           <TableRow className="hover:bg-transparent">
-            <TableHead className="w-[70px] px-4 py-3">Rank</TableHead>
-            <TableHead className="min-w-[220px] px-4 py-3">Model / Source</TableHead>
-            <TableHead className="px-4 py-3">NASA score</TableHead>
-            <TableHead className="px-4 py-3">RMSE</TableHead>
-            <TableHead className="px-4 py-3">Status</TableHead>
-            <TableHead className="min-w-[280px] px-4 py-3">Link / Advantage</TableHead>
+            <TableHead className="w-[70px] px-4 py-3 whitespace-normal">Rank</TableHead>
+            <TableHead className="px-4 py-3 whitespace-normal">Model / Source</TableHead>
+            <TableHead className="px-4 py-3 whitespace-normal">NASA score</TableHead>
+            <TableHead className="px-4 py-3 whitespace-normal">RMSE</TableHead>
+            <TableHead className="px-4 py-3 whitespace-normal">Status</TableHead>
+            <TableHead className="px-4 py-3 whitespace-normal">Link / Advantage</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.entries.map((row) => (
             <TableRow key={`${row.rank}-${row.model}`} className="hover:bg-muted/20">
-              <TableCell className="px-4 py-3 align-top font-medium">{row.rank}</TableCell>
-              <TableCell className="px-4 py-3 align-top">
+              <TableCell className="px-4 py-3 align-top font-medium whitespace-normal">
+                {row.rank}
+              </TableCell>
+              <TableCell className="px-4 py-3 align-top break-words whitespace-normal">
                 <p className="font-medium">{row.model}</p>
                 {row.source ? (
                   <p className="text-sm text-muted-foreground">{row.source}</p>
                 ) : null}
               </TableCell>
-              <TableCell className="px-4 py-3 align-top">{row.nasa_score.toFixed(2)}</TableCell>
-              <TableCell className="px-4 py-3 align-top">{row.rmse.toFixed(2)}</TableCell>
-              <TableCell className="px-4 py-3 align-top">
+              <TableCell className="px-4 py-3 align-top whitespace-normal">
+                {row.nasa_score.toFixed(2)}
+              </TableCell>
+              <TableCell className="px-4 py-3 align-top whitespace-normal">
+                {row.rmse.toFixed(2)}
+              </TableCell>
+              <TableCell className="px-4 py-3 align-top whitespace-normal">
                 <Badge variant="secondary" className="border border-primary/30 bg-primary/10">
                   {row.status}
                 </Badge>
               </TableCell>
-              <TableCell className="px-4 py-3 align-top text-sm">
+              <TableCell className="px-4 py-3 align-top text-sm break-words whitespace-normal">
                 <Link
                   href={row.link}
                   target="_blank"

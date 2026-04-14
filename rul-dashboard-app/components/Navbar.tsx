@@ -115,6 +115,17 @@ export default function Navbar() {
               </li>
             );
           })}
+          <li>
+            <Link
+              href="/dashboard"
+              className={cn(
+                "whitespace-nowrap rounded-full px-3 py-1.5 transition-colors hover:bg-muted hover:text-foreground",
+                pathname === "/dashboard" ? "bg-muted text-primary" : "text-muted-foreground"
+              )}
+            >
+              Dashboard
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
