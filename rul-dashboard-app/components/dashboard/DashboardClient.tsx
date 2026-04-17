@@ -797,7 +797,7 @@ export default function DashboardClient({
           </div>
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">Selected engine phase share (of total cycles)</p>
-            <div className="flex w-full">
+            <div className="flex w-full pl-12 pr-2">
               <div
                 className="relative min-w-0 pt-3 text-emerald-700"
                 style={{ width: `${enginePhaseCounts.healthyPct}%` }}
