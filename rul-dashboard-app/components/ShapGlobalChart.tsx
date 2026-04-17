@@ -10,7 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { ShapGlobal } from "@/lib/types";
 
 const axis = "var(--muted-foreground)";
@@ -25,11 +25,7 @@ export default function ShapGlobalChart({
 }) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.45 });
-  const [playBars, setPlayBars] = useState(false);
-
-  useEffect(() => {
-    if (isInView) setPlayBars(true);
-  }, [isInView]);
+  const playBars = isInView;
 
   const data = [...shap.values]
     .sort((a, b) => a.rank - b.rank)

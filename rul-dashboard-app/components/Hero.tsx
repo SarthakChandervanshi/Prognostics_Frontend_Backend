@@ -196,7 +196,7 @@ export default function Hero({ metrics, sample }: HeroProps) {
               </CardTitle>
               <CardDescription className="text-xs">
                 The predicted interval is shown against ground truth. The bar is scaled using only
-                this engine's low, high, and true values.
+                this engine&apos;s low, high, and true values.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

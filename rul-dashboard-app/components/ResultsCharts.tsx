@@ -15,7 +15,7 @@ import {
   Cell,
 } from "recharts";
 import { motion, useInView } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { Metrics, PredictionRow } from "@/lib/types";
 import { MetricCard } from "@/components/MetricCard";
 import {
@@ -42,11 +42,7 @@ type ResultsChartsProps = {
 export default function ResultsCharts({ metrics, predictions }: ResultsChartsProps) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 });
-  const [playCharts, setPlayCharts] = useState(false);
-
-  useEffect(() => {
-    if (isInView) setPlayCharts(true);
-  }, [isInView]);
+  const playCharts = isInView;
 
   const scatter = predictions.map((p) => ({
     y_true: p.y_true,

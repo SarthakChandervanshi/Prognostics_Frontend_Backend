@@ -113,56 +113,53 @@ export default function DashboardClient({
   );
 
   const [engineSeries, setEngineSeries] = useState<EngineSeriesRow[] | null>(null);
+  const [engineSeriesLoadedFor, setEngineSeriesLoadedFor] = useState<number | null>(null);
   const [localShap, setLocalShap] = useState<LocalShapPayload | null>(null);
-  const [isEngineSeriesLoading, setIsEngineSeriesLoading] = useState(false);
-  const [isLocalShapLoading, setIsLocalShapLoading] = useState(false);
+  const [localShapLoadedFor, setLocalShapLoadedFor] = useState<number | null>(null);
 
   useEffect(() => {
-    if (selectedEngine == null) {
-      setEngineSeries(null);
-      setLocalShap(null);
-      return;
-    }
+    if (selectedEngine == null) return;
 
     let active = true;
-    setIsEngineSeriesLoading(true);
     fetch(`/data/engine_series/engine_${selectedEngine}.json`)
       .then((r) => (r.ok ? r.json() : null))
       .then((payload) => {
         if (!active) return;
         const rows = Array.isArray(payload?.rows) ? payload.rows : null;
         setEngineSeries(rows);
-        setIsEngineSeriesLoading(false);
+        setEngineSeriesLoadedFor(selectedEngine);
       })
       .catch(() => {
         if (!active) return;
         setEngineSeries(null);
-        setIsEngineSeriesLoading(false);
+        setEngineSeriesLoadedFor(selectedEngine);
       });
 
-    setIsLocalShapLoading(true);
     fetch(`/data/shap_local/engine_${selectedEngine}.json`)
       .then((r) => (r.ok ? r.json() : null))
       .then((payload) => {
         if (!active) return;
         if (payload?.values && Array.isArray(payload.values)) {
           setLocalShap(payload as LocalShapPayload);
-          setIsLocalShapLoading(false);
+          setLocalShapLoadedFor(selectedEngine);
           return;
         }
         setLocalShap(null);
-        setIsLocalShapLoading(false);
+        setLocalShapLoadedFor(selectedEngine);
       })
       .catch(() => {
         if (!active) return;
         setLocalShap(null);
-        setIsLocalShapLoading(false);
+        setLocalShapLoadedFor(selectedEngine);
       });
 
     return () => {
       active = false;
     };
   }, [selectedEngine]);
+
+  const isEngineSeriesLoading = selectedEngine != null && engineSeriesLoadedFor !== selectedEngine;
+  const isLocalShapLoading = selectedEngine != null && localShapLoadedFor !== selectedEngine;
 
   const sensorOptions = useMemo(() => {
     if (!engineSeries || engineSeries.length === 0) return [];
@@ -296,7 +293,6 @@ export default function DashboardClient({
     };
   }, [enginePhaseTrend]);
 
-  const datasetTotal = Math.max(metrics.critical_n + metrics.healthy_n, 1);
   const maxStep = enginePhaseTrend[enginePhaseTrend.length - 1]?.step ?? null;
   const degradationStartStep = useMemo(() => {
     if (maxStep == null) return null;

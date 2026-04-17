@@ -23,6 +23,8 @@ build/
 **/build/
 .vercel/
 **/.vercel/
+.vercel-local/
+**/.vercel-local/
 
 # --- JS / TS tooling ---
 *.tsbuildinfo
