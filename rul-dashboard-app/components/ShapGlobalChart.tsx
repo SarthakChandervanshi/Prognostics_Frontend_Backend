@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Label,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -54,10 +55,12 @@ export default function ShapGlobalChart({
           key={playBars ? "bars-animated" : "bars-idle"}
           data={data}
           layout="vertical"
-          margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
+          margin={{ top: 8, right: 16, bottom: 28, left: 8 }}
         >
           <CartesianGrid stroke={grid} strokeDasharray="3 3" />
-          <XAxis type="number" stroke={axis} fontSize={11} />
+          <XAxis type="number" stroke={axis} fontSize={11}>
+            <Label value="Mean |SHAP| value" position="bottom" offset={8} />
+          </XAxis>
           <YAxis
             type="category"
             dataKey="feature"
@@ -65,7 +68,14 @@ export default function ShapGlobalChart({
             stroke={axis}
             fontSize={10}
             tick={{ fill: "var(--muted-foreground)" }}
-          />
+          >
+            <Label
+              value="Feature"
+              angle={-90}
+              position="insideLeft"
+              style={{ textAnchor: "middle" }}
+            />
+          </YAxis>
           <Tooltip
             contentStyle={{
               background: "var(--card)",

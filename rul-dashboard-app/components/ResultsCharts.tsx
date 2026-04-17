@@ -230,7 +230,7 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
             >
               <ScatterChart
                 key={playCharts ? "scatter-on" : "scatter-off"}
-                margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                margin={{ top: 8, right: 8, bottom: 28, left: 8 }}
               >
                 <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" />
                 <XAxis
@@ -240,7 +240,7 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
                   stroke={chartColors.axis}
                   fontSize={11}
                 >
-                  <Label value="True RUL (cycles)" position="insideBottom" offset={-2} />
+                  <Label value="True RUL (cycles)" position="bottom" offset={8} />
                 </XAxis>
                 <YAxis
                   type="number"
