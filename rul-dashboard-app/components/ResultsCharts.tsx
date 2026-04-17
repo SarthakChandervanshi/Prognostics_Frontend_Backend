@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Label,
   Legend,
   ReferenceLine,
   ResponsiveContainer,
@@ -238,14 +239,23 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
                   name="True RUL"
                   stroke={chartColors.axis}
                   fontSize={11}
-                />
+                >
+                  <Label value="True RUL (cycles)" position="insideBottom" offset={-2} />
+                </XAxis>
                 <YAxis
                   type="number"
                   dataKey="rul_mid"
                   name="Predicted RUL"
                   stroke={chartColors.axis}
                   fontSize={11}
-                />
+                >
+                  <Label
+                    value="Predicted RUL (cycles)"
+                    angle={-90}
+                    position="insideLeft"
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
                 <ReferenceLine
                   segment={[
                     { x: diagonalMin, y: diagonalMin },
@@ -351,14 +361,23 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
                   fontSize={11}
                   interval={0}
                   height={40}
-                />
+                >
+                  <Label value="Coverage type" position="insideBottom" offset={-2} />
+                </XAxis>
                 <YAxis
                   stroke={chartColors.axis}
                   fontSize={11}
                   allowDecimals={false}
                   domain={[0, 100]}
                   unit="%"
-                />
+                >
+                  <Label
+                    value="Coverage (%)"
+                    angle={-90}
+                    position="insideLeft"
+                    style={{ textAnchor: "middle" }}
+                  />
+                </YAxis>
                 <RechartsTooltip
                   contentStyle={{
                     background: "var(--card)",
@@ -439,7 +458,7 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
             <BarChart
               key={playCharts ? "phase-on" : "phase-off"}
               data={phasePerformance}
-              margin={{ top: 8, right: 20, bottom: 20, left: 8 }}
+              margin={{ top: 44, right: 20, bottom: 20, left: 8 }}
             >
               <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" />
               <XAxis
@@ -448,20 +467,36 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
                 fontSize={11}
                 interval={0}
                 height={40}
-              />
+              >
+                <Label value="Phase bucket" position="insideBottom" offset={-2} />
+              </XAxis>
               <YAxis
                 yAxisId="left"
                 stroke={chartColors.axis}
                 fontSize={11}
                 domain={[0, 100]}
                 unit="%"
-              />
+              >
+                <Label
+                  value="Within 10 cycles (%)"
+                  angle={-90}
+                  position="insideLeft"
+                  style={{ textAnchor: "middle" }}
+                />
+              </YAxis>
               <YAxis
                 yAxisId="right"
                 orientation="right"
                 stroke={chartColors.axis}
                 fontSize={11}
-              />
+              >
+                <Label
+                  value="RMSE"
+                  angle={90}
+                  position="insideRight"
+                  style={{ textAnchor: "middle" }}
+                />
+              </YAxis>
               <RechartsTooltip
                 contentStyle={{
                   background: "var(--card)",
@@ -487,7 +522,9 @@ export default function ResultsCharts({ metrics, predictions }: ResultsChartsPro
                 }}
               />
               <Legend
-                wrapperStyle={{ fontSize: 11 }}
+                align="right"
+                verticalAlign="top"
+                wrapperStyle={{ fontSize: 11, right: 8, top: 0 }}
                 formatter={(v) => (v === "within10" ? "Within 10 cycles (%)" : "RMSE")}
               />
               <Bar
