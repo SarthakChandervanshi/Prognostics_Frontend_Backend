@@ -21,7 +21,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 
-/** Placeholder until the dashboard route and URL are defined. */
 const DASHBOARD_HREF = "/dashboard";
 
 type HeroProps = {

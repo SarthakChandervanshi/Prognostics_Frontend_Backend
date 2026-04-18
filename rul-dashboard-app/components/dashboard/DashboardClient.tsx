@@ -18,7 +18,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { ArrowLeft, ChevronDown, CircleHelp, Radar, Settings2 } from "lucide-react";
+import { ArrowLeft, ChevronDown, CircleHelp, Radar } from "lucide-react";
 import type { Metrics, PredictionRow, ShapGlobal } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/lib/dashboardStore";
+import SensorMeanStdByRulChart from "@/components/dashboard/SensorMeanStdByRulChart";
+import SensorRulCorrelationChart from "@/components/dashboard/SensorRulCorrelationChart";
 
 type DashboardClientProps = {
   metrics: Metrics;
@@ -173,63 +175,6 @@ export default function DashboardClient({
       setSelectedSensor(pickDefaultSensor(sensorOptions));
     }
   }, [selectedSensor, sensorOptions, setSelectedSensor]);
-
-  const sensorTrendData = useMemo(() => {
-    if (!engineSeries) return [];
-    return engineSeries.map((r) => ({
-      cycle: r.cycle,
-      raw: r.sensors?.[selectedSensor] ?? null,
-      smoothed: r.smoothed?.[selectedSensor] ?? r.features?.[selectedSensor] ?? null,
-    }));
-  }, [engineSeries, selectedSensor]);
-
-  const sensorDisplayMode = useMemo<"absolute" | "relative">(() => {
-    const smoothedValues = sensorTrendData
-      .map((d) => d.smoothed)
-      .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
-    if (smoothedValues.length < 2) return "absolute";
-    const min = Math.min(...smoothedValues);
-    const max = Math.max(...smoothedValues);
-    const mean = Math.abs(smoothedValues.reduce((acc, v) => acc + v, 0) / smoothedValues.length);
-    if (mean === 0) return "absolute";
-    const relativeSpan = (max - min) / mean;
-    return relativeSpan < 0.01 ? "relative" : "absolute";
-  }, [sensorTrendData]);
-
-  const sensorPlotData = useMemo(() => {
-    if (sensorDisplayMode === "absolute") {
-      return sensorTrendData.map((d) => ({ ...d, rawPlot: d.raw, smoothedPlot: d.smoothed }));
-    }
-
-    const firstSmoothed =
-      sensorTrendData.find((d) => typeof d.smoothed === "number" && Number.isFinite(d.smoothed))
-        ?.smoothed ?? null;
-    const firstRaw =
-      sensorTrendData.find((d) => typeof d.raw === "number" && Number.isFinite(d.raw))?.raw ?? null;
-    const smoothedBase = firstSmoothed && firstSmoothed !== 0 ? firstSmoothed : null;
-    const rawBase = firstRaw && firstRaw !== 0 ? firstRaw : smoothedBase;
-
-    return sensorTrendData.map((d) => ({
-      ...d,
-      rawPlot: rawBase != null && d.raw != null ? ((d.raw - rawBase) / Math.abs(rawBase)) * 100 : null,
-      smoothedPlot:
-        smoothedBase != null && d.smoothed != null
-          ? ((d.smoothed - smoothedBase) / Math.abs(smoothedBase)) * 100
-          : null,
-    }));
-  }, [sensorDisplayMode, sensorTrendData]);
-
-  const sensorYAxisDomain = useMemo<[number, number] | undefined>(() => {
-    const values = sensorPlotData
-      .flatMap((d) => [d.rawPlot, d.smoothedPlot])
-      .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
-    if (values.length === 0) return undefined;
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const span = max - min;
-    const pad = span === 0 ? Math.max(Math.abs(min) * 0.05, 1) : span * 0.1;
-    return [min - pad, max + pad];
-  }, [sensorPlotData]);
 
   const intervalAcrossEngines = useMemo(
     () =>
@@ -530,107 +475,13 @@ export default function DashboardClient({
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <Card className="border-border/70">
-          <CardHeader className="pb-1">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Settings2 className="size-4 text-primary" />
-              Sensor trend (selected engine)
-              <TooltipProvider delayDuration={180}>
-                <UiTooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="Explain sensor trend chart"
-                      className="inline-flex size-4 items-center justify-center text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
-                    >
-                      <CircleHelp className="size-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-left leading-relaxed">
-                    <p>
-                      Shows the selected sensor over the last 30 cycles for the chosen engine.
-                      Blue is the smoothed signal used by the model.
-                    </p>
-                  </TooltipContent>
-                </UiTooltip>
-              </TooltipProvider>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {sensorOptions.length > 0 ? (
-              <div className="relative w-full max-w-sm">
-                <select
-                  className="h-9 w-full appearance-none rounded-md border border-border bg-background px-3 pr-10 text-sm"
-                  value={selectedSensor}
-                  onChange={(e) => setSelectedSensor(e.target.value)}
-                >
-                  {sensorOptions.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                  aria-hidden
-                />
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                No per-engine sensor series found in <code>/public/data/engine_series</code> yet.
-              </p>
-            )}
-            {sensorDisplayMode === "relative" ? (
-              <p className="text-xs text-muted-foreground">
-                Auto-scaled to relative change (%): this sensor varies very little in absolute units.
-              </p>
-            ) : null}
-            {isEngineSeriesLoading ? (
-              <div className="h-[320px] animate-pulse rounded-lg border border-border/60 bg-muted/30" />
-            ) : (
-              <div className="h-[320px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={sensorPlotData} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-                    <CartesianGrid stroke={colors.grid} strokeDasharray="3 3" />
-                    <XAxis dataKey="cycle" stroke={colors.axis} fontSize={11}>
-                      <Label value="Cycle" position="insideBottom" offset={-2} />
-                    </XAxis>
-                    <YAxis
-                      stroke={colors.axis}
-                      fontSize={11}
-                      domain={sensorYAxisDomain}
-                      tickFormatter={(value) =>
-                        sensorDisplayMode === "relative" ? `${Number(value).toFixed(2)}%` : Number(value).toFixed(2)
-                      }
-                    >
-                      <Label
-                        value={sensorDisplayMode === "relative" ? "Sensor value change (%)" : "Sensor value"}
-                        angle={-90}
-                        position="insideLeft"
-                        style={{ textAnchor: "middle" }}
-                      />
-                    </YAxis>
-                    <Tooltip />
-                    <Line
-                      dataKey="rawPlot"
-                      stroke={colors.true}
-                      strokeWidth={1.5}
-                      dot={false}
-                      connectNulls
-                    />
-                    <Line
-                      dataKey="smoothedPlot"
-                      stroke={colors.pred}
-                      strokeWidth={2}
-                      dot={false}
-                      connectNulls
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <SensorMeanStdByRulChart
+          predictions={predictions}
+          selectedSensor={selectedSensor}
+          sensorOptions={sensorOptions}
+          onSensorChange={setSelectedSensor}
+          keysLoading={isEngineSeriesLoading}
+        />
         <Card className="border-border/70">
           <CardHeader className="pb-1">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -722,6 +573,8 @@ export default function DashboardClient({
           </CardContent>
         </Card>
       </div>
+
+      <SensorRulCorrelationChart predictions={predictions} />
 
       <Card className="border-border/70">
         <CardHeader className="pb-1">

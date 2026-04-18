@@ -86,7 +86,7 @@ export default async function HomePage() {
             <div className="rounded-2xl border border-border/80 bg-card/40 p-4 md:p-6">
               <TooltipProvider delayDuration={180}>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold">Global SHAP (interactive)</h3>
+                  <h3 className="text-lg font-semibold">Global SHAP</h3>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 </div>
               </TooltipProvider>
               <p className="mt-1 text-sm text-muted-foreground">
-                Mean absolute SHAP values aggregated over time — top features emphasize
+                Mean absolute SHAP values aggregated over time - top features emphasize
                 trends and rolling characteristics rather than raw sensor magnitudes
                 alone.
               </p>

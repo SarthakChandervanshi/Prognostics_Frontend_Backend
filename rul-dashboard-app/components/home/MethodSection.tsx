@@ -169,7 +169,7 @@ export default function MethodSection() {
           className="mt-4 text-pretty text-muted-foreground md:text-lg"
         >
           This project uses a data-driven pipeline to predict remaining useful life (RUL) of aircraft
-          engines from multivariate sensor data. The numbered strip below matches each card—use{" "}
+          engines from multivariate sensor data. The numbered strip below matches each card, use{" "}
           <span className="whitespace-nowrap">“Show details”</span> when a step has more than two
           bullet points.
         </motion.p>

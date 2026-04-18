@@ -214,7 +214,7 @@ export default function ProblemSummary() {
                 />
               </div>
               <figcaption className="border-t border-border/50 px-3 py-2 text-center text-[10px] leading-snug text-muted-foreground">
-                Decision teams need spread and risk visible—not only a point forecast on a dashboard.
+                Decision teams need spread and risk visible, not only a point forecast on a dashboard.
                 <span className="mt-1 block">
                   <a
                     href="https://www.pexels.com/photo/person-using-macbook-pro-265087/"

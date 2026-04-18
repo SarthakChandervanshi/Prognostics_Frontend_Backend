@@ -14,7 +14,7 @@ const stages = [
   },
   {
     label: "Degradation",
-    caption: "Wear accumulates; early warnings matter.",
+    caption: "Wear accumulates, and early warnings matter.",
     color: "text-amber-400",
     border: "border-amber-500/30",
     icon: Activity,
