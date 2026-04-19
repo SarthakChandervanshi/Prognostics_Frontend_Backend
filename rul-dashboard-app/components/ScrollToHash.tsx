@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { stripBasePath } from "@/lib/basePath";
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
@@ -13,9 +14,10 @@ function prefersReducedMotion(): boolean {
  */
 export default function ScrollToHash() {
   const pathname = usePathname();
+  const routePath = stripBasePath(pathname);
 
   useEffect(() => {
-    if (pathname !== "/") return;
+    if (routePath !== "/") return;
 
     const run = () => {
       const hash = window.location.hash;
@@ -33,7 +35,7 @@ export default function ScrollToHash() {
     run();
     window.addEventListener("hashchange", run);
     return () => window.removeEventListener("hashchange", run);
-  }, [pathname]);
+  }, [routePath]);
 
   return null;
 }

@@ -2,13 +2,14 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { withBasePath } from "@/lib/basePath";
 
 /** Old multi-page URLs → single-page anchors. */
 export default function RedirectToSection({ section }: { section: string }) {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace(`/#${section}`);
+    router.replace(withBasePath(`/#${section}`));
   }, [router, section]);
 
   return (

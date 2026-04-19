@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { withBasePath } from "@/lib/basePath";
 import { AlertTriangle, CircleDollarSign, Quote } from "lucide-react";
 
 /** Stock photos (local copies): Unsplash + Pexels — see captions for links & license. */
@@ -89,7 +90,7 @@ export default function ProblemSummary() {
             <figure className="overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-lg ring-1 ring-foreground/5">
               <div className="relative aspect-[4/3] w-full">
                 <Image
-                  src={PROBLEM_IMAGES.jetEngine}
+                  src={withBasePath(PROBLEM_IMAGES.jetEngine)}
                   alt="Close-up of a turbofan jet engine in an aircraft hangar, representing hardware where wear accumulates and RUL is estimated."
                   fill
                   sizes="(max-width: 1024px) 100vw, 420px"
@@ -206,7 +207,7 @@ export default function ProblemSummary() {
             <figure className="overflow-hidden rounded-2xl border border-border/60 bg-card/50 shadow-lg ring-1 ring-foreground/5">
               <div className="relative aspect-[4/3] w-full">
                 <Image
-                  src={PROBLEM_IMAGES.analytics}
+                  src={withBasePath(PROBLEM_IMAGES.analytics)}
                   alt="Person reviewing data and charts on a laptop, representing planning and decisions that should use ranges and uncertainty, not a single headline number."
                   fill
                   sizes="(max-width: 1024px) 100vw, 480px"

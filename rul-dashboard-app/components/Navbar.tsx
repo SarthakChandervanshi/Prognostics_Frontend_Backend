@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useCallback, type MouseEvent } from "react";
 import { cn } from "@/lib/utils";
+import { stripBasePath } from "@/lib/basePath";
 import { scrollToSection } from "@/lib/scrollToSection";
 import { Gauge } from "lucide-react";
 
@@ -27,21 +28,22 @@ const links = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const routePath = stripBasePath(pathname);
   const [active, setActive] = useState<string>("home");
 
   const handleSamePageHashClick = useCallback(
     (e: MouseEvent<HTMLAnchorElement>, id: string) => {
-      if (pathname !== "/") return;
+      if (routePath !== "/") return;
       e.preventDefault();
       scrollToSection(id);
       // Immediate highlight; scroll-spy will sync on scroll end (fixes perceived lag)
       setActive(id);
     },
-    [pathname]
+    [routePath]
   );
 
   useEffect(() => {
-    if (pathname !== "/") return;
+    if (routePath !== "/") return;
 
     /**
      * Sections use scroll-mt-28 — after scrollIntoView, getBoundingClientRect().top is
@@ -75,9 +77,9 @@ export default function Navbar() {
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [pathname]);
+  }, [routePath]);
 
-  const onHome = pathname === "/";
+  const onHome = routePath === "/";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
@@ -120,7 +122,7 @@ export default function Navbar() {
               href="/dashboard"
               className={cn(
                 "whitespace-nowrap rounded-full px-3 py-1.5 transition-colors hover:bg-muted hover:text-foreground",
-                pathname === "/dashboard" ? "bg-muted text-primary" : "text-muted-foreground"
+                routePath === "/dashboard" ? "bg-muted text-primary" : "text-muted-foreground"
               )}
             >
               Dashboard
