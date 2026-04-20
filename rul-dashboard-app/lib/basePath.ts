@@ -1,7 +1,7 @@
 /**
  * Subpath when the app is deployed under a URL prefix (e.g. `https://domain.com/rul-dashboard-app`).
- * Set `NEXT_PUBLIC_BASE_PATH=/rul-dashboard-app` on Vercel (must match `basePath` in `next.config.ts`).
- * Leave unset for local dev at `http://localhost:3000/` (no prefix).
+ * Resolved in `next.config.ts` (Vercel defaults + `env.NEXT_PUBLIC_BASE_PATH`). Optional override: set
+ * `NEXT_PUBLIC_BASE_PATH` in Vercel or `.env.local`.
  */
 export function getBasePath(): string {
   return process.env.NEXT_PUBLIC_BASE_PATH ?? "";
