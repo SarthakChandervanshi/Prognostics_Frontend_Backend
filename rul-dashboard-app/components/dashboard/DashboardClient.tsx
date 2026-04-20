@@ -30,7 +30,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { withBasePath } from "@/lib/basePath";
 import { useDashboardStore } from "@/lib/dashboardStore";
 import SensorMeanStdByRulChart from "@/components/dashboard/SensorMeanStdByRulChart";
 import SensorRulCorrelationChart from "@/components/dashboard/SensorRulCorrelationChart";
@@ -124,7 +123,7 @@ export default function DashboardClient({
     if (selectedEngine == null) return;
 
     let active = true;
-    fetch(withBasePath(`/data/engine_series/engine_${selectedEngine}.json`))
+    fetch(`/data/engine_series/engine_${selectedEngine}.json`)
       .then((r) => (r.ok ? r.json() : null))
       .then((payload) => {
         if (!active) return;
@@ -138,7 +137,7 @@ export default function DashboardClient({
         setEngineSeriesLoadedFor(selectedEngine);
       });
 
-    fetch(withBasePath(`/data/shap_local/engine_${selectedEngine}.json`))
+    fetch(`/data/shap_local/engine_${selectedEngine}.json`)
       .then((r) => (r.ok ? r.json() : null))
       .then((payload) => {
         if (!active) return;

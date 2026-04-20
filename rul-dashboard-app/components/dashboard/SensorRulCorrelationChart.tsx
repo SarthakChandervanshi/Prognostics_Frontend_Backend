@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import type { PredictionRow } from "@/lib/types";
-import { withBasePath } from "@/lib/basePath";
 
 type SeriesRow = { cycle: number; smoothed?: Record<string, number> };
 
@@ -98,9 +97,7 @@ export default function SensorRulCorrelationChart({ predictions }: { predictions
           const results = await Promise.all(
             chunk.map(async (id) => {
               try {
-                const res = await fetch(
-                  withBasePath(`/data/engine_series/engine_${id}.json`)
-                );
+                const res = await fetch(`/data/engine_series/engine_${id}.json`);
                 if (!res.ok) return null;
                 const json = (await res.json()) as { rows?: SeriesRow[] };
                 const series = json?.rows;

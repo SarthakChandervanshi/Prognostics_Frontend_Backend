@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { useLayoutEffect } from "react";
-import { stripBasePath } from "@/lib/basePath";
 
 /**
  * On `/` with no hash: force scroll to top so the hero is shown (avoids restored
@@ -10,16 +9,15 @@ import { stripBasePath } from "@/lib/basePath";
  */
 export default function ScrollRestoration() {
   const pathname = usePathname();
-  const routePath = stripBasePath(pathname);
 
   useLayoutEffect(() => {
-    if (routePath !== "/") return;
+    if (pathname !== "/") return;
     if (typeof window === "undefined") return;
     if (window.location.hash) return;
 
     window.history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
-  }, [routePath]);
+  }, [pathname]);
 
   return null;
 }
