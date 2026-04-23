@@ -374,6 +374,7 @@ export default function SensorMeanStdByRulChart({
           <div className="h-[450px] min-h-0 min-w-0">
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <ComposedChart
+                key={selectedSensor}
                 data={plotConfig.plotData}
                 margin={{ top: 8, right: 12, left: 8, bottom: 28 }}
               >
@@ -438,7 +439,6 @@ export default function SensorMeanStdByRulChart({
                   isAnimationActive
                   animationDuration={500}
                   animationEasing="ease-out"
-                  animationId={`${selectedSensor}-lower`}
                 />
                 <Area
                   type="monotone"
@@ -452,7 +452,6 @@ export default function SensorMeanStdByRulChart({
                   animationDuration={650}
                   animationBegin={60}
                   animationEasing="ease-out"
-                  animationId={`${selectedSensor}-band`}
                 />
                 <Line
                   type="monotone"
@@ -465,7 +464,6 @@ export default function SensorMeanStdByRulChart({
                   animationDuration={700}
                   animationBegin={100}
                   animationEasing="ease-out"
-                  animationId={`${selectedSensor}-mean`}
                 />
               </ComposedChart>
             </ResponsiveContainer>
