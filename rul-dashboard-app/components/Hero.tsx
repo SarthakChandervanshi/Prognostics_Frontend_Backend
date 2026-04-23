@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ArrowRight, CircleHelp } from "lucide-react";
 
-const DASHBOARD_HREF = "/dashboard";
+const DASHBOARD_HREF = "/experimentation-dashboard";
 
 type HeroProps = {
   metrics: Metrics;

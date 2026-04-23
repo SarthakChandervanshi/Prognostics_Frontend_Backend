@@ -30,3 +30,9 @@ No standalone backend service is required for normal usage.
 Deploy on Vercel with `rul-dashboard-app` as the root directory.
 
 For full repository documentation (architecture, sections, tech stack), see the root `README.md`.
+
+## Experimentation Dashboard Docs
+
+Detailed documentation for the new experimentation section is in:
+
+- `README-EXPERIMENTATION-DASHBOARD.md`

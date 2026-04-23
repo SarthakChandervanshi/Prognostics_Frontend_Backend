@@ -23,7 +23,11 @@ import {
 import { Activity, ChevronDown, CircleHelp } from "lucide-react";
 import type { PredictionRow } from "@/lib/types";
 
-type SeriesRow = { cycle: number; smoothed?: Record<string, number> };
+type SeriesRow = {
+  cycle: number;
+  smoothed?: Record<string, number>;
+  sensors?: Record<string, number>;
+};
 
 /** Matches `df.groupby("RUL")[sensor].agg(["mean", "std"])` then `mean ± std` band (Plotly tonexty). */
 type SensorMeanStdRow = {
@@ -72,6 +76,8 @@ type SensorMeanStdByRulChartProps = {
   onSensorChange: (sensor: string) => void;
   /** True while the parent is loading engine_series for the dropdown keys only. */
   keysLoading?: boolean;
+  seriesField?: "smoothed" | "sensors";
+  seriesDataPath?: string;
 };
 
 export default function SensorMeanStdByRulChart({
@@ -80,6 +86,8 @@ export default function SensorMeanStdByRulChart({
   sensorOptions,
   onSensorChange,
   keysLoading = false,
+  seriesField = "smoothed",
+  seriesDataPath = "/data/engine_series",
 }: SensorMeanStdByRulChartProps) {
   const [lastResult, setLastResult] = useState<{
     key: string;
@@ -116,7 +124,7 @@ export default function SensorMeanStdByRulChart({
           const results = await Promise.all(
             chunk.map(async (id) => {
               try {
-                const res = await fetch(`/data/engine_series/engine_${id}.json`);
+                const res = await fetch(`${seriesDataPath}/engine_${id}.json`);
                 if (!res.ok) return null;
                 const json = (await res.json()) as { rows?: SeriesRow[] };
                 const series = json?.rows;
@@ -136,8 +144,11 @@ export default function SensorMeanStdByRulChart({
             if (!item) continue;
             const { series, yTrue, lastCycle } = item;
             for (const row of series) {
-              const sm = row.smoothed?.[selectedSensor];
-              if (typeof sm !== "number" || !Number.isFinite(sm)) continue;
+              const sensorValue =
+                seriesField === "sensors"
+                  ? row.sensors?.[selectedSensor]
+                  : row.smoothed?.[selectedSensor];
+              if (typeof sensorValue !== "number" || !Number.isFinite(sensorValue)) continue;
               const rul = yTrue + (lastCycle - row.cycle);
               if (!Number.isFinite(rul)) continue;
               const RUL = Math.round(rul);
@@ -146,7 +157,7 @@ export default function SensorMeanStdByRulChart({
                 arr = [];
                 byRul.set(RUL, arr);
               }
-              arr.push(sm);
+              arr.push(sensorValue);
             }
           }
         }
@@ -187,7 +198,7 @@ export default function SensorMeanStdByRulChart({
     return () => {
       cancelled = true;
     };
-  }, [predKey, predictions, selectedSensor]);
+  }, [predKey, predictions, selectedSensor, seriesField, seriesDataPath]);
 
   const chartData = useMemo(
     () => (lastResult?.key === `${predKey}|${selectedSensor}` ? lastResult.data : []),
@@ -246,7 +257,6 @@ export default function SensorMeanStdByRulChart({
         useDeviation: false,
         relSpan,
         absSpan,
-        weakPooledTrend: absSpan < 0.35,
         yTick: (v: number) => (Number.isFinite(v) ? v.toFixed(3) : ""),
         yLabel: label,
       };
@@ -287,7 +297,6 @@ export default function SensorMeanStdByRulChart({
       absSpan,
       refMean,
       stackOffset,
-      weakPooledTrend: absSpan < 0.35,
       yTick: (v: number) => {
         if (!Number.isFinite(v)) return "";
         const dev = v - stackOffset;
@@ -304,14 +313,14 @@ export default function SensorMeanStdByRulChart({
           <CardTitle className="flex flex-wrap items-center gap-2 text-base">
             <Activity className="size-4 shrink-0 text-primary" />
             <span className="min-w-0">
-              {label} - mean ± std across engines
+              Pooled Sensor Degradation (Mean ± Std Across Engines)
             </span>
             <TooltipProvider delayDuration={180}>
               <UiTooltip>
                 <TooltipTrigger asChild>
                   <button
                     type="button"
-                    aria-label="Explain mean and standard deviation by RUL chart"
+                    aria-label="What this chart shows"
                     className="inline-flex size-4 shrink-0 items-center justify-center text-muted-foreground/70 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                   >
                     <CircleHelp className="size-3.5" />
@@ -319,27 +328,16 @@ export default function SensorMeanStdByRulChart({
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs text-left text-xs leading-relaxed">
                   <p>
-                    Same logic as{" "}
-                    <span className="font-mono">df.groupby(&quot;RUL&quot;)[sensor].agg([&quot;mean&quot;,&quot;std&quot;])</span>
-                    : pool all engines, then for each RUL value plot <strong>mean</strong> and a
-                    shaded <strong>mean ± std</strong> band (Plotly <span className="font-mono">fill=&quot;tonexty&quot;</span>
-                    ). RUL per row is <span className="font-mono">y_true + (c_last − c)</span>.
-                  </p>
-                  <p className="mt-1">
-                    X-axis is reversed so high remaining life is on the left and failure (0) on the
-                    right—fleet-level sensor degradation vs true RUL, not one engine trace.
+                    This chart shows how the average value of this sensor across the test engines changes
+                    as failure approaches. The horizontal axis is remaining useful life (RUL). Values on
+                    the left correspond to more life remaining; the right is at or near the end of life.
+                    The line is the fleet mean at each RUL, and the shaded band is the usual spread of
+                    readings (about one standard deviation above and below the mean) at the same RUL.
                   </p>
                 </TooltipContent>
               </UiTooltip>
             </TooltipProvider>
           </CardTitle>
-          <p className="text-xs text-muted-foreground">
-            {plotConfig?.useDeviation
-              ? plotConfig.weakPooledTrend
-                ? "Pooled mean barely moves with RUL in this window (~30 cycles/engine)—this sensor may be weak for fleet-level degradation here; tooltip has exact values."
-                : "Y-axis shows deviation from the fleet mean at the highest RUL (raw change is small vs magnitude—see tooltip for mean ± std)."
-              : "Degradation trend: mean ± std vs RUL (pooled test engines)."}
-          </p>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -373,9 +371,12 @@ export default function SensorMeanStdByRulChart({
         ) : chartData.length === 0 || !plotConfig ? (
           <p className="text-sm text-muted-foreground">No pooled data for this sensor.</p>
         ) : (
-          <div className="h-[450px] min-h-[320px] min-w-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={plotConfig.plotData} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
+          <div className="h-[450px] min-h-0 min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+              <ComposedChart
+                data={plotConfig.plotData}
+                margin={{ top: 8, right: 12, left: 8, bottom: 28 }}
+              >
                 <CartesianGrid stroke={colors.grid} strokeDasharray="3 3" />
                 <XAxis
                   type="number"
@@ -386,7 +387,12 @@ export default function SensorMeanStdByRulChart({
                   fontSize={11}
                   tickFormatter={(v) => Math.round(Number(v)).toString()}
                 >
-                  <Label value="RUL (cycles remaining)" position="insideBottom" offset={-2} />
+                  <Label
+                    value="RUL (cycles remaining)"
+                    position="bottom"
+                    offset={4}
+                    style={{ textAnchor: "middle" }}
+                  />
                 </XAxis>
                 <YAxis
                   stroke={colors.axis}
@@ -405,29 +411,17 @@ export default function SensorMeanStdByRulChart({
                       stackOffset?: number;
                     };
                     if (!row) return null;
-                    const refM = chartData[chartData.length - 1]?.mean;
-                    const deltaVsRef =
-                      refM !== undefined ? row.mean - refM : null;
+                    const rul = Math.round(Number(label));
                     return (
-                      <div className="rounded-md border border-border bg-background px-3 py-2 text-xs shadow-sm">
-                        <p className="font-medium">RUL = {Math.round(Number(label))}</p>
-                        <p className="mt-1 text-muted-foreground">
-                          Mean: <span className="font-mono text-foreground">{row.mean.toFixed(4)}</span>
+                      <div className="max-w-[16rem] rounded-md border border-border bg-background px-3 py-2 text-xs shadow-sm leading-relaxed">
+                        <p className="font-medium">{rul} cycles remaining (x-axis)</p>
+                        <p className="mt-1.5 text-muted-foreground">
+                          Fleet average reading:{" "}
+                          <span className="font-mono text-foreground">{row.mean.toFixed(4)}</span>
                         </p>
-                        {plotConfig.useDeviation && deltaVsRef != null && Number.isFinite(deltaVsRef) ? (
-                          <p className="text-muted-foreground">
-                            Δ vs mean at max RUL:{" "}
-                            <span className="font-mono text-foreground">{deltaVsRef.toFixed(4)}</span>
-                          </p>
-                        ) : null}
-                        <p className="text-muted-foreground">
-                          Std: <span className="font-mono text-foreground">{row.std.toFixed(4)}</span>
-                        </p>
-                        <p className="text-muted-foreground">
-                          mean ± std: [{row.lower.toFixed(4)}, {row.upper.toFixed(4)}]
-                        </p>
-                        <p className="text-muted-foreground">
-                          n: <span className="text-foreground">{row.n}</span>
+                        <p className="mt-0.5 text-muted-foreground">
+                          Shaded band: typical spread (±1 std) from {row.lower.toFixed(4)} to{" "}
+                          {row.upper.toFixed(4)} ({row.n} engine measurements pooled for this RUL).
                         </p>
                       </div>
                     );
@@ -441,7 +435,10 @@ export default function SensorMeanStdByRulChart({
                   stroke="none"
                   fill="none"
                   legendType="none"
-                  isAnimationActive={false}
+                  isAnimationActive
+                  animationDuration={500}
+                  animationEasing="ease-out"
+                  animationId={`${selectedSensor}-lower`}
                 />
                 <Area
                   type="monotone"
@@ -451,7 +448,11 @@ export default function SensorMeanStdByRulChart({
                   fill={colors.band}
                   fillOpacity={0.22}
                   name="±1 std"
-                  isAnimationActive={false}
+                  isAnimationActive
+                  animationDuration={650}
+                  animationBegin={60}
+                  animationEasing="ease-out"
+                  animationId={`${selectedSensor}-band`}
                 />
                 <Line
                   type="monotone"
@@ -460,7 +461,11 @@ export default function SensorMeanStdByRulChart({
                   stroke={colors.mean}
                   strokeWidth={2}
                   dot={false}
-                  isAnimationActive={false}
+                  isAnimationActive
+                  animationDuration={700}
+                  animationBegin={100}
+                  animationEasing="ease-out"
+                  animationId={`${selectedSensor}-mean`}
                 />
               </ComposedChart>
             </ResponsiveContainer>

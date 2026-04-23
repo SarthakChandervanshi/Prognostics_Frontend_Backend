@@ -80,8 +80,8 @@ export default function Navbar() {
   const onHome = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+    <header className="sticky top-0 z-50">
+      <nav className="flex w-full items-center justify-between gap-4 border border-border/70 bg-background/85 px-5 py-3 shadow-lg shadow-black/5 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
         <Link
           href="/#home"
           scroll={false}
@@ -117,10 +117,12 @@ export default function Navbar() {
           })}
           <li>
             <Link
-              href="/dashboard"
+              href="/experimentation-dashboard"
               className={cn(
                 "whitespace-nowrap rounded-full px-3 py-1.5 transition-colors hover:bg-muted hover:text-foreground",
-                pathname === "/dashboard" ? "bg-muted text-primary" : "text-muted-foreground"
+                pathname === "/experimentation-dashboard"
+                  ? "bg-muted text-primary"
+                  : "text-muted-foreground"
               )}
             >
               Dashboard

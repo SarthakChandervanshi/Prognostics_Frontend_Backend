@@ -4,17 +4,15 @@ import { usePathname } from "next/navigation";
 import { useLayoutEffect } from "react";
 
 /**
- * On `/` with no hash: force scroll to top so the hero is shown (avoids restored
- * mid-page scroll landing near #problem). Skips when the URL targets a section.
+ * Reset window scroll on every client-side route change (home ↔ dashboard, etc.) so
+ * a long scroll on one page is not carried over. `ScrollToHash` still runs after on `/`
+ * when the URL has a hash to scroll to the right section.
  */
 export default function ScrollRestoration() {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
-    if (pathname !== "/") return;
     if (typeof window === "undefined") return;
-    if (window.location.hash) return;
-
     window.history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
   }, [pathname]);
