@@ -41,6 +41,7 @@ import SensorMeanStdByRulChart from "@/components/dashboard/SensorMeanStdByRulCh
 import type { Metrics, PredictionRow, ShapGlobal } from "@/lib/types";
 import { cn } from "@/lib/utils";
 const PLAY_SYMBOL = "▶";
+const PAUSE_SYMBOL = "⏸";
 const NON_CONSTANT_RAW_SENSORS = [
   "sensor_measurement_2",
   "sensor_measurement_3",
@@ -676,12 +677,22 @@ export default function ExperimentationDashboardClient({
                 <button
                   type="button"
                   className={cn(buttonVariants({ variant: "outline", size: "sm" }), "rounded-full")}
-                  onClick={() => setQuadrantTourStep(0)}
+                  onClick={() => {
+                    if (quadrantTourStep != null) {
+                      // Pause immediately ends the tour and clears all highlights.
+                      setQuadrantTourStep(null);
+                      return;
+                    }
+                    setQuadrantTourStep(0);
+                  }}
                 >
-                  <span aria-hidden className="mr-1">
-                    {PLAY_SYMBOL}
+                  <span
+                    aria-hidden
+                    className={cn("mr-1 leading-none", quadrantTourStep != null ? "text-base" : "text-sm")}
+                  >
+                    {quadrantTourStep != null ? PAUSE_SYMBOL : PLAY_SYMBOL}
                   </span>
-                  Play Quadrant Tour
+                  {quadrantTourStep != null ? "Pause Quadrant Tour" : "Play Quadrant Tour"}
                 </button>
               </div>
             </CardHeader>
